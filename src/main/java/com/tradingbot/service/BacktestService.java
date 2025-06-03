@@ -1,6 +1,6 @@
 package com.tradingbot.service;
 
-import com.tradingbot.api.FetchMarketData;
+import com.tradingbot.api.MarketDataService;
 import com.tradingbot.database.Repositories.BacktestResultRepository;
 import com.tradingbot.database.entities.BacktestResult;
 import com.tradingbot.database.entities.Candle;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class BacktestService {
     
     @Autowired
-    private FetchMarketData fetchMarketData;
+    private MarketDataService marketDataService;
     
     @Autowired
     private BacktestResultRepository backtestResultRepository;
@@ -29,7 +29,7 @@ public class BacktestService {
         BacktestResult result = new BacktestResult(strategyName, symbol, "1 min", "TRADES", 
                                                   durationString, true, "{}");
         
-        return fetchMarketData.fetchTechStockData(symbol, durationString)
+        return marketDataService.fetchTechStockData(symbol, durationString)
             .thenApply(candles -> {
                 try {
                     if (candles.isEmpty()) {
@@ -72,7 +72,7 @@ public class BacktestService {
                                                                            StrategyEngine strategy, 
                                                                            String strategyName) {
         
-        return fetchMarketData.fetchAllTechStocks(durationString)
+        return marketDataService.fetchAllTechStocks(durationString)
             .thenApply(stockDataMap -> {
                 return stockDataMap.entrySet().stream()
                     .map(entry -> {
