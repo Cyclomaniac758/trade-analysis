@@ -7,14 +7,17 @@ import com.ib.client.EReader;
 import com.ib.client.EReaderSignal;
 import com.ib.client.DefaultEWrapper;
 import com.ib.client.EJavaSignal;
-
 public class IBKRClient {
     private final EClientSocket clientSocket;
     private final EJavaSignal signal;
 
     public IBKRClient() {
         signal = new EJavaSignal();
-        clientSocket = new EClientSocket(new DefaultEWrapper() {
+        clientSocket = new EClientSocket(createWrapper(), signal);
+    }
+    
+    protected DefaultEWrapper createWrapper() {
+        return new DefaultEWrapper() {
             @Override
             public void connectAck() {
                 System.out.println("✅ Connection acknowledged.");
@@ -25,13 +28,16 @@ public class IBKRClient {
                 System.err.println("❌ Exception: " + e.getMessage());
             }
 
-            
+            @Override
+            public void error(int id, int errorCode, String errorMsg) {
+                System.err.println("❌ Error ID: " + id + ", Code: " + errorCode + ", Message: " + errorMsg);
+            }
 
             @Override
             public void nextValidId(int orderId) {
                 System.out.println("✅ Connected. Next valid order ID: " + orderId);
             }
-        }, signal);
+        };
     }
 
     public void connect(String host, int port, int clientId) {
@@ -58,5 +64,9 @@ public class IBKRClient {
 
     public void disconnect() {
         clientSocket.eDisconnect();
+    }
+    
+    public EClientSocket getClientSocket() {
+        return clientSocket;
     }
 }
