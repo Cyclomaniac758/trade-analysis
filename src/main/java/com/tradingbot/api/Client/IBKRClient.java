@@ -29,7 +29,7 @@ public class IBKRClient {
             }
 
             @Override
-            public void error(int id, int errorCode, String errorMsg) {
+            public void error(int id, int errorCode, String errorMsg, String advancedOrderRejectJson) {
                 System.err.println("❌ Error ID: " + id + ", Code: " + errorCode + ", Message: " + errorMsg);
             }
 
